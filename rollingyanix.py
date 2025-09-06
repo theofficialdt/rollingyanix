@@ -33,7 +33,7 @@ USER_AGENT = 'RollingYanixLauncher/20250906'
 YANIX_PATH = os.path.expanduser("~/.local/share/yanix-launcher")
 DATA_DOWNLOAD_URL = "https://nikoyandere.github.io/data.zip"
 TEMP_ZIP_PATH = os.path.join(YANIX_PATH, "data.zip")
-LATEST_VERSION_URL = ""
+LATEST_VERSION_URL = "https://raw.githubusercontent.com/theofficialdt/rollingyanix/main/rollingyanix.py"
 
 CONFIG_PATH = os.path.join(YANIX_PATH, "data/game_path.txt")
 LANG_PATH = os.path.join(YANIX_PATH, "data/multilang.txt")
