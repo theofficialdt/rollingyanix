@@ -28,7 +28,7 @@ except ImportError:
     presence_enabled = False
 
 CLIENT_ID = '1383809366460989490'
-USER_AGENT = 'YanixLauncher/2025.09.06'
+USER_AGENT = 'RollingYanixLauncher/2025.09.06.02'
 
 YANIX_PATH = os.path.expanduser("~/.local/share/yanix-launcher")
 DATA_DOWNLOAD_URL = "https://nikoyandere.github.io/data.zip"
@@ -664,7 +664,7 @@ class SettingsDialog(QDialog):
             QPushButton {{
                 color: {theme["button_text_color"]};
                 background-color: {theme["button_bg_color"]};
-                padding: 8px;
+                padding: 12px;
                 border-radius: 6px;
                 border: 1px solid {theme["border_color"]};
             }}
@@ -904,7 +904,7 @@ class YanixLauncher(QMainWindow):
             QPushButton {{
                 color: {theme["button_text_color"]};
                 background-color: {theme["button_bg_color"]};
-                padding: 8px;
+                padding: 15px;
                 border-radius: 6px;
                 border: 1px solid {theme["border_color"]};
             }}
@@ -1184,7 +1184,7 @@ class YanixLauncher(QMainWindow):
         self.left_layout = QVBoxLayout()
         self.left_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        font = QFont("Futura", 16)
+        font = QFont("Futura", 18)
         version_font = QFont("Futura", 10)
 
         self.play_button = QPushButton()
@@ -1269,4 +1269,3 @@ if __name__ == "__main__":
     splash.finish(launcher)
 
     sys.exit(app.exec())
-
