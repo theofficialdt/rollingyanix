@@ -28,7 +28,7 @@ except ImportError:
     presence_enabled = False
 
 CLIENT_ID = '1383809366460989490'
-USER_AGENT = 'RollingYanixLauncher/20250906'
+USER_AGENT = 'YanixLauncher/2025.09.06'
 
 YANIX_PATH = os.path.expanduser("~/.local/share/yanix-launcher")
 DATA_DOWNLOAD_URL = "https://nikoyandere.github.io/data.zip"
