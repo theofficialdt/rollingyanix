@@ -56,4 +56,9 @@ Usage
 git clone https://github.com/theofficialdt/RollingYanix.git
 cd RollingYanix
 ```
+2. Run:
+```
+python3 rollingyanix.py
+
+``` 
 
