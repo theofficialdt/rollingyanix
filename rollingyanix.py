@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (
     QWidget, QLabel, QMessageBox, QComboBox, QDialog, QHBoxLayout,
     QSplashScreen, QProgressDialog, QLineEdit, QCheckBox
 )
-from PyQt6.QtGui import QFont, QPalette, QLinearGradient, QColor, QBrush, QIcon, QPainter, QPixmap
+from PyQt6.QtGui import QFont, QPalette, QLinearGradient, QColor, QBrush, QIcon, QPainter, QPixmap, QFontDatabase
 from PyQt6.QtCore import Qt, QUrl, QRect, QTimer, QCoreApplication, QObject, pyqtSignal, QThread
 
 try:
@@ -46,6 +46,7 @@ CUSTOM_THEMES_DIR = os.path.join(YANIX_PATH, "themes")
 ADVANCED_CONFIG_PATH = os.path.join(YANIX_PATH, "advanced_config.json")
 ADVANCED_FLAG_PATH = os.path.join(YANIX_PATH, "advanced_mode.flag")
 FIRST_RUN_FLAG_PATH = os.path.join(YANIX_PATH, ".first_run_complete")
+JOST_FONT_PATH = os.path.join(YANIX_PATH, "data/Font/Jost.ttf")
 
 
 YAN_SIM_DOWNLOAD_URL = "https://yanderesimulator.com/dl/latest.zip"
@@ -106,7 +107,7 @@ LANGUAGES = {
         "update_error": "No se pudieron buscar actualizaciones.", "advanced_mode": "Modo Avanzado", "advanced_enabled": "Modo Avanzado Activado",
         "advanced_disabled": "Modo Avanzado Desactivado", "apply": "Aplicar", "theme_error_title": "Error de Tema",
         "theme_load_error": "No se pudo cargar el tema desde {filepath}: {e}", "advanced_settings_applied": "Configuración avanzada aplicada. Algunos cambios pueden requerir un reinicio.",
-        "lang_ai_warning": "Este idioma está parcialmente traducido por IA. Algunas traducciones pueden ser incorrectas.", "info_title": "Información",
+        "lang_ai_warning": "Este idioma es parcialmente traducido por IA. Algunas traducciones pueden ser incorrectas.", "info_title": "Información",
         "error_title": "Error", "lang_save_error": "No se pudo guardar la configuración de idioma: {e}", "theme_save_error": "No se pudo guardar la configuración del tema: {e}",
         "game_path_invalid": "La ruta del juego configurada no es válida. Por favor, selecciona el archivo .exe correcto.", "game_path_undefined": "La ruta del juego no está definida. Por favor, descarga el juego o selecciona el archivo .exe.",
         "wine_missing": "WINE no está instalado o no está en tu PATH. Por favor, instala WINE para ejecutar el juego.", "game_launch_fail": "Error al iniciar el juego: {e}",
@@ -484,18 +485,18 @@ class YanixSplashScreen(QSplashScreen):
 
         text_rect = QRect(rect.width() // 2 - 200, rect.height() // 2 - 50, 400, 100)
 
-        font_title = QFont("Futura", 32, QFont.Weight.Bold)
+        font_title = QFont("Jost", 32, QFont.Weight.Bold)
         painter.setFont(font_title)
         painter.setPen(QColor(255, 255, 255))
         painter.drawText(text_rect, Qt.AlignmentFlag.AlignCenter, "Yanix Launcher")
 
-        font_message = QFont("Futura", 16)
+        font_message = QFont("Jost", 16)
         painter.setFont(font_message)
         painter.setPen(QColor(0, 0, 0))
         message_rect = QRect(rect.width() // 2 - 200, rect.height() // 2 + 10, 400, 50)
         painter.drawText(message_rect, Qt.AlignmentFlag.AlignCenter, self.message)
 
-        font_progress = QFont("Futura", 12)
+        font_progress = QFont("Jost", 12)
         painter.setFont(font_progress)
         painter.setPen(QColor(0, 0, 0))
         progress_rect = QRect(rect.width() - 150, rect.height() - 50, 100, 30)
@@ -679,21 +680,26 @@ class SettingsDialog(QDialog):
         layout = QVBoxLayout()
 
         lang_label = QLabel(lang_data["select_language"])
+        lang_label.setFont(QFont("Jost", 12))
         layout.addWidget(lang_label)
         self.lang_selector = QComboBox()
         self.lang_selector.addItems(LANGUAGES.keys())
         self.lang_selector.setCurrentText(lang_code)
+        self.lang_selector.setFont(QFont("Jost", 10))
         layout.addWidget(self.lang_selector)
 
         theme_label = QLabel(lang_data["select_theme"])
+        theme_label.setFont(QFont("Jost", 12))
         layout.addWidget(theme_label)
         self.theme_selector = QComboBox()
         self.update_theme_selector_items()
         self.theme_selector.setCurrentText(self.current_theme_name)
+        self.theme_selector.setFont(QFont("Jost", 10))
         layout.addWidget(self.theme_selector)
 
         self.load_custom_theme_button = QPushButton(lang_data["load_custom_theme"])
         self.load_custom_theme_button.clicked.connect(self.load_custom_theme_file)
+        self.load_custom_theme_button.setFont(QFont("Jost", 10))
         layout.addWidget(self.load_custom_theme_button)
 
         if is_advanced:
@@ -702,6 +708,7 @@ class SettingsDialog(QDialog):
 
         self.apply_btn = QPushButton(lang_data["apply"])
         self.apply_btn.clicked.connect(self.apply_settings)
+        self.apply_btn.setFont(QFont("Jost", 10))
         layout.addWidget(self.apply_btn)
 
         self.setLayout(layout)
@@ -710,30 +717,38 @@ class SettingsDialog(QDialog):
     def setup_advanced_settings(self, layout, lang_data):
         adv_label = QLabel("Advanced Settings")
         adv_label.setStyleSheet("font-weight: bold; margin-top: 10px;")
+        adv_label.setFont(QFont("Jost", 14, QFont.Weight.Bold))
         layout.addWidget(adv_label)
 
         blog_link_label = QLabel("Blog Link URL")
+        blog_link_label.setFont(QFont("Jost", 12))
         layout.addWidget(blog_link_label)
         self.blog_link_edit = QLineEdit()
         self.blog_link_edit.setText(self.advanced_config.get("BLOGLINK", ""))
+        self.blog_link_edit.setFont(QFont("Jost", 10))
         layout.addWidget(self.blog_link_edit)
 
         self.discord_rpc_checkbox = QCheckBox("Enable Discord Rich Presence")
         self.discord_rpc_checkbox.setChecked(self.advanced_config.get("DISCORD_RPC", True))
+        self.discord_rpc_checkbox.setFont(QFont("Jost", 10))
         layout.addWidget(self.discord_rpc_checkbox)
 
         self.launch_command_label = QLabel(lang_data.get("launch_command_label", "Custom Launch Command (%LC% = Game Command)"))
+        self.launch_command_label.setFont(QFont("Jost", 12))
         layout.addWidget(self.launch_command_label)
         self.launch_command_edit = QLineEdit()
         self.launch_command_edit.setText(self.advanced_config.get("LAUNCH_COMMAND", ""))
+        self.launch_command_edit.setFont(QFont("Jost", 10))
         layout.addWidget(self.launch_command_edit)
 
         self.select_exe_button = QPushButton(self.parent().lang["select_exe"])
         self.select_exe_button.clicked.connect(self.parent().select_exe)
+        self.select_exe_button.setFont(QFont("Jost", 10))
         layout.addWidget(self.select_exe_button)
 
         self.wineprefix_button = QPushButton(self.parent().lang["wineprefix"])
         self.wineprefix_button.clicked.connect(self.parent().select_wineprefix)
+        self.wineprefix_button.setFont(QFont("Jost", 10))
         layout.addWidget(self.wineprefix_button)
 
     def apply_theme_to_settings_buttons(self):
@@ -745,6 +760,7 @@ class SettingsDialog(QDialog):
                 padding: 8px;
                 border-radius: 6px;
                 border: 1px solid {theme["border_color"]};
+                font-family: Jost;
             }}
             QPushButton:hover {{
                 background-color: {theme["button_hover_bg_color"]};
@@ -978,7 +994,7 @@ class YanixLauncher(QMainWindow):
 
             result = subprocess.run(['wine', '--version'], capture_output=True, text=True, check=True)
             output = result.stdout.strip()
-            
+
             match = re.search(r'([0-9]+)\.([0-9]+)', output)
 
             if match:
@@ -1010,6 +1026,7 @@ class YanixLauncher(QMainWindow):
                 padding: 10px;
                 border-radius: 6px;
                 border: 1px solid {theme["border_color"]};
+                font-family: Jost;
             }}
             QPushButton:hover {{
                 background-color: {theme["button_hover_bg_color"]};
@@ -1021,7 +1038,7 @@ class YanixLauncher(QMainWindow):
                        self.support_button, self.discord_button, self.credits_button]:
             button.setStyleSheet(button_style)
 
-        self.version_label.setStyleSheet(f"color: {theme['label_text_color']}; margin-top: 20px;")
+        self.version_label.setStyleSheet(f"color: {theme['label_text_color']}; margin-top: 20px; font-family: Jost;")
 
         blog_view_style = f"""
             QWebEngineView {{
@@ -1045,7 +1062,7 @@ class YanixLauncher(QMainWindow):
     def _wait_for_game_exit(self, process):
         process.wait()
         self.game_finished.emit()
-        
+
     def _on_pad_mode_finished(self):
         self.show()
 
@@ -1096,7 +1113,7 @@ class YanixLauncher(QMainWindow):
             env = os.environ.copy()
             if self.wineprefix:
                 env["WINEPREFIX"] = self.wineprefix
-            
+
             executable_to_check = final_command[0]
             if not shutil.which(executable_to_check) and not os.path.exists(executable_to_check):
                 QMessageBox.critical(self, self.lang["error_title"], self.lang["exe_not_found"].format(exe=executable_to_check))
@@ -1123,7 +1140,7 @@ class YanixLauncher(QMainWindow):
             QMessageBox.critical(self, self.lang["error_title"], self.lang["game_launch_fail"].format(e=e))
             self.show()
             self.update_rpc(details="In the launcher", state="Browsing...")
-            
+
     def launch_pad_mode(self):
         pad_mode_script_path = os.path.join(YANIX_PATH, "data", "padmode.py")
         if os.path.exists(pad_mode_script_path):
@@ -1170,7 +1187,7 @@ class YanixLauncher(QMainWindow):
             return
 
         yan_sim_zip_path = os.path.join(YANIX_PATH, "yansim.zip")
-        
+
         should_download = False
 
         if os.path.exists(YAN_SIM_INSTALL_PATH):
@@ -1355,8 +1372,8 @@ Yandere Simulator™ Made By YandereDev, All Rights Reserved
         self.left_layout = QVBoxLayout()
         self.left_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        font = QFont("Futura", 18)
-        version_font = QFont("Futura", 10)
+        font = QFont("Jost", 18)
+        version_font = QFont("Jost", 10)
 
         self.play_button = QPushButton()
         self.play_button.setFont(font)
@@ -1372,7 +1389,7 @@ Yandere Simulator™ Made By YandereDev, All Rights Reserved
         self.download_button.setFont(font)
         self.download_button.clicked.connect(self.download_game)
         self.left_layout.addWidget(self.download_button)
-        
+
         self.pad_mode_button = QPushButton()
         self.pad_mode_button.setFont(font)
         self.pad_mode_button.clicked.connect(self.launch_pad_mode)
@@ -1425,7 +1442,9 @@ Yandere Simulator™ Made By YandereDev, All Rights Reserved
 if __name__ == "__main__":
     QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts, True)
     app = QApplication(sys.argv)
-    
+
+    QFontDatabase.addApplicationFont(JOST_FONT_PATH)
+
     handle_first_run()
 
     lang_code = get_language()
@@ -1434,7 +1453,7 @@ if __name__ == "__main__":
     splash = YanixSplashScreen(current_lang_data)
     splash.show()
 
-    signals = DownloadSignals()  
+    signals = DownloadSignals()
     signals.update_splash.connect(splash.update_splash_content)
     signals.download_failed.connect(lambda msg: QMessageBox.critical(None, current_lang_data["download_failed"], msg))
     signals.extraction_progress.connect(lambda current, total: splash.update_splash_content(current_lang_data["extracting_data"], f"({current}/{total} files)"))
