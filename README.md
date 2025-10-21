@@ -53,7 +53,7 @@ Usage
 
 1. Clone this repository:
 ```
-git clone https://github.com/your-username/RollingYanix.git
+git clone https://github.com/theofficialdt/RollingYanix.git
 cd RollingYanix
 ```
 
