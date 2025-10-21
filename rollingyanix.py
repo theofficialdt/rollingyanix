@@ -30,7 +30,7 @@ except ImportError:
     presence_enabled = False
 
 CLIENT_ID = '1383809366460989490'
-USER_AGENT = 'RollingYanixLauncher/20251910-1'
+USER_AGENT = 'RollingYanixLauncher/20252010-1'
 
 YANIX_PATH = os.path.expanduser("~/.local/share/yanix-launcher")
 DATA_DOWNLOAD_URL = "https://theofficialdt.github.io/data.zip"
