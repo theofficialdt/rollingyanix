@@ -30,7 +30,7 @@ except ImportError:
     presence_enabled = False
 
 CLIENT_ID = '1383809366460989490'
-USER_AGENT = 'RollingYanixLauncher/20252010'
+USER_AGENT = 'RollingYanixLauncher/20251117.1'
 
 YANIX_PATH = os.path.expanduser("~/.local/share/yanix-launcher")
 DATA_DOWNLOAD_URL = "https://theofficialdt.github.io/data.zip"
@@ -305,7 +305,43 @@ LANGUAGES = {
 }
 
 THEMES = {
-    "yanix-default": {
+    "dragon-red": {
+        "background_color_start": "#660000",
+        "background_color_end": "#000000",
+        "button_bg_color": "#CC0000",
+        "button_text_color": "#FFFFFF",
+        "button_hover_bg_color": "#FF3333",
+        "label_text_color": "#FFFFFF",
+        "border_color": "#990000"
+    },
+    "dragon-blue": {
+        "background_color_start": "#000033",
+        "background_color_end": "#000000",
+        "button_bg_color": "#003366",
+        "button_text_color": "#FFFFFF",
+        "button_hover_bg_color": "#004C99",
+        "label_text_color": "#FFFFFF",
+        "border_color": "#336699"
+    },
+    "dragon-white": {
+        "background_color_start": "#FFFFFF",
+        "background_color_end": "#E0E0E0",
+        "button_bg_color": "#D3D3D3",
+        "button_text_color": "#000000",
+        "button_hover_bg_color": "#BEBEBE",
+        "label_text_color": "#000000",
+        "border_color": "#A9A9A9"
+    },
+    "dragon-dark": {
+        "background_color_start": "#1a1a1a",
+        "background_color_end": "#000000",
+        "button_bg_color": "#4d4d4d",
+        "button_text_color": "#FFFFFF",
+        "button_hover_bg_color": "#666666",
+        "label_text_color": "#FFFFFF",
+        "border_color": "#808080"
+    },
+    "yanix-legacy": {
         "background_color_start": "#ff4da6",
         "background_color_end": "#6666ff",
         "button_bg_color": "white",
@@ -331,24 +367,6 @@ THEMES = {
         "button_hover_bg_color": "#cccccc",
         "label_text_color": "black",
         "border_color": "#aaaaaa"
-    },
-    "ocean-blue": {
-        "background_color_start": "#007bff",
-        "background_color_end": "#0056b3",
-        "button_bg_color": "#6c757d",
-        "button_text_color": "white",
-        "button_hover_bg_color": "#5a6268",
-        "label_text_color": "white",
-        "border_color": "#495057"
-    },
-    "forest-green": {
-        "background_color_start": "#28a745",
-        "background_color_end": "#1e7e34",
-        "button_bg_color": "#ffc107",
-        "button_text_color": "black",
-        "button_hover_bg_color": "#e0a800",
-        "label_text_color": "white",
-        "border_color": "#d39e00"
     }
 }
 
@@ -356,16 +374,10 @@ def handle_first_run():
     if not os.path.exists(FIRST_RUN_FLAG_PATH):
         data_dir = os.path.join(YANIX_PATH, "data")
         if os.path.isdir(data_dir):
-            for filename in os.listdir(data_dir):
-                if filename not in ["multilang.txt", "theme.txt"]:
-                    file_path = os.path.join(data_dir, filename)
-                    try:
-                        if os.path.isfile(file_path) or os.path.islink(file_path):
-                            os.unlink(file_path)
-                        elif os.path.isdir(file_path):
-                            shutil.rmtree(file_path)
-                    except Exception as e:
-                        print(f"Failed to delete {file_path}. Reason: {e}")
+            try:
+                shutil.rmtree(data_dir)
+            except Exception as e:
+                print(f"Failed to delete {data_dir}. Reason: {e}")
         try:
             with open(FIRST_RUN_FLAG_PATH, "w") as f:
                 f.write("done")
@@ -430,7 +442,7 @@ def get_theme():
                     return theme_setting
     except IOError:
         pass
-    return "yanix-default"
+    return "dragon-red"
 
 def get_wineprefix_path():
     try:
@@ -476,8 +488,8 @@ class YanixSplashScreen(QSplashScreen):
         rect = self.rect()
 
         gradient = QLinearGradient(0, 0, 0, rect.height())
-        gradient.setColorAt(0, QColor(THEMES["yanix-default"]["background_color_start"]))
-        gradient.setColorAt(1, QColor(THEMES["yanix-default"]["background_color_end"]))
+        gradient.setColorAt(0, QColor(THEMES["yanix-legacy"]["background_color_start"]))
+        gradient.setColorAt(1, QColor(THEMES["yanix-legacy"]["background_color_end"]))
         painter.fillRect(rect, gradient)
 
         painter.setPen(QColor(0, 0, 0))
@@ -1013,7 +1025,7 @@ class YanixLauncher(QMainWindow):
             theme_data = load_custom_theme(self.current_theme_name, self.lang)
             if theme_data:
                 return theme_data
-        return THEMES.get(self.current_theme_name, THEMES["yanix-default"])
+        return THEMES.get(self.current_theme_name, THEMES["dragon-red"])
 
     def apply_theme(self, theme_name):
         self.current_theme_name = theme_name
