@@ -33,7 +33,7 @@ except ImportError:
 IS_WINDOWS = platform.system() == 'Windows'
 
 CLIENT_ID = '1383809366460989490'
-USER_AGENT = 'RollingYanixLauncher/20251117.1'
+USER_AGENT = 'RollingYanixLauncher/20251119.1'
 
 if IS_WINDOWS:
     YANIX_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'yanix-launcher')
