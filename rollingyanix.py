@@ -12,6 +12,7 @@ import socket
 import json
 import tempfile
 import re
+import platform
 
 from PyQt6.QtWebEngineCore import QWebEngineProfile, QWebEnginePage
 from PyQt6.QtWebEngineWidgets import QWebEngineView
@@ -29,10 +30,15 @@ try:
 except ImportError:
     presence_enabled = False
 
+IS_WINDOWS = platform.system() == 'Windows'
+
 CLIENT_ID = '1383809366460989490'
 USER_AGENT = 'RollingYanixLauncher/20251117.1'
 
-YANIX_PATH = os.path.expanduser("~/.local/share/yanix-launcher")
+if IS_WINDOWS:
+    YANIX_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'yanix-launcher')
+else:
+    YANIX_PATH = os.path.expanduser("~/.local/share/yanix-launcher")
 DATA_DOWNLOAD_URL = "https://theofficialdt.github.io/data.zip"
 TEMP_ZIP_PATH = os.path.join(YANIX_PATH, "data.zip")
 LATEST_VERSION_URL = "https://raw.githubusercontent.com/theofficialdt/rollingyanix/refs/heads/main/rollingyanix.py"
@@ -758,10 +764,11 @@ class SettingsDialog(QDialog):
         self.select_exe_button.setFont(QFont("Jost", 10))
         layout.addWidget(self.select_exe_button)
 
-        self.wineprefix_button = QPushButton(self.parent().lang["wineprefix"])
-        self.wineprefix_button.clicked.connect(self.parent().select_wineprefix)
-        self.wineprefix_button.setFont(QFont("Jost", 10))
-        layout.addWidget(self.wineprefix_button)
+        if not IS_WINDOWS:
+            self.wineprefix_button = QPushButton(self.parent().lang["wineprefix"])
+            self.wineprefix_button.clicked.connect(self.parent().select_wineprefix)
+            self.wineprefix_button.setFont(QFont("Jost", 10))
+            layout.addWidget(self.wineprefix_button)
 
     def apply_theme_to_settings_buttons(self):
         theme = self.parent().get_current_theme_data()
@@ -1000,6 +1007,8 @@ class YanixLauncher(QMainWindow):
             self.rpc = None
 
     def check_and_warn_wine_version(self):
+        if IS_WINDOWS:
+            return
         try:
             if not shutil.which("wine"):
                 return
@@ -1098,7 +1107,10 @@ class YanixLauncher(QMainWindow):
             QMessageBox.critical(self, self.lang["error_title"], self.lang["game_path_undefined"])
             return
 
-        base_game_command = ["wine", wine_path_exe]
+        if IS_WINDOWS:
+            base_game_command = [wine_path_exe]
+        else:
+            base_game_command = ["wine", wine_path_exe]
         game_dir = os.path.dirname(wine_path_exe)
 
         custom_command_str = self.advanced_config.get("LAUNCH_COMMAND", "").strip()
@@ -1123,7 +1135,7 @@ class YanixLauncher(QMainWindow):
 
         try:
             env = os.environ.copy()
-            if self.wineprefix:
+            if self.wineprefix and not IS_WINDOWS:
                 env["WINEPREFIX"] = self.wineprefix
 
             executable_to_check = final_command[0]
@@ -1158,7 +1170,7 @@ class YanixLauncher(QMainWindow):
         if os.path.exists(pad_mode_script_path):
             try:
                 self.hide()
-                process = subprocess.Popen(["python3", pad_mode_script_path])
+                process = subprocess.Popen([sys.executable, pad_mode_script_path])
                 monitor_thread = threading.Thread(
                     target=self._wait_for_pad_mode_exit,
                     args=(process,),
@@ -1183,6 +1195,8 @@ class YanixLauncher(QMainWindow):
                 QMessageBox.critical(self, self.lang["error_title"], self.lang["exe_save_fail"].format(e=e))
 
     def select_wineprefix(self):
+        if IS_WINDOWS:
+            return
         directory = QFileDialog.getExistingDirectory(self, self.lang["wineprefix"])
         if directory:
             try:
@@ -1294,6 +1308,9 @@ class YanixLauncher(QMainWindow):
         QMessageBox.information(self, self.lang["success_title"], self.lang["game_download_success"])
 
     def manage_winetricks(self):
+        if IS_WINDOWS:
+            QMessageBox.information(self, "Info", "Winetricks is not needed on Windows.")
+            return
         if not shutil.which("winetricks"):
             QMessageBox.critical(self, self.lang["error_title"], self.lang["winetricks_missing"])
         else:
@@ -1328,7 +1345,7 @@ class YanixLauncher(QMainWindow):
 
                 QMessageBox.information(self, self.lang["check_updates"], self.lang["update_restart_prompt"])
 
-                os.execv(sys.executable, ['python3'] + sys.argv)
+                os.execv(sys.executable, [sys.executable] + sys.argv)
 
             except Exception as e:
                 QMessageBox.critical(self, self.lang["update_error_window_title"], self.lang["update_fail"].format(e=e))
@@ -1410,7 +1427,8 @@ Yandere Simulator™ Made By YandereDev, All Rights Reserved
         self.winetricks_button = QPushButton()
         self.winetricks_button.setFont(font)
         self.winetricks_button.clicked.connect(self.manage_winetricks)
-        self.left_layout.addWidget(self.winetricks_button)
+        if not IS_WINDOWS:
+            self.left_layout.addWidget(self.winetricks_button)
 
         self.check_updates_button = QPushButton()
         self.check_updates_button.setFont(font)
