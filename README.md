@@ -48,6 +48,14 @@ pip install pygame pypresence
 - pygame — for "Pad Mode"
 - pypresence — for Discord Rich Presence integration
 
+
+## Notes
+
+* WINE **8.0 or newer** is recommended.
+* Graphics/text glitches are generally **game** issues, not Yanix-Launcher bugs.
+
+---
+
 Usage
 -----
 
