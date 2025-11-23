@@ -1,9 +1,8 @@
-RollingYanix
+RollingYanix: Yanix Launcher — Now Rolling Release
 ============
 
 ![Banner](https://github.com/user-attachments/assets/b5b9796e-3048-4dd3-b1ab-fed3d646ee87)
 
-Yanix Launcher — Now Rolling Release
 -----------------------------------
 
 System Requirements
