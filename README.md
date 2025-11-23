@@ -6,8 +6,6 @@ RollingYanix
 Yanix Launcher — Now Rolling Release
 -----------------------------------
 
-![Logo](https://github.com/user-attachments/assets/fad3502c-8f35-4976-93db-895ccd134971)
-
 System Requirements
 -------------------
 
