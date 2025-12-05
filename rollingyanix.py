@@ -37,7 +37,7 @@ except ImportError:
 IS_WINDOWS = platform.system() == 'Windows'
 
 CLIENT_ID = '1383809366460989490'
-USER_AGENT = 'RollingYanixLauncher/20251204.1'
+USER_AGENT = 'RollingYanixLauncher/20251205.1'
 
 if IS_WINDOWS:
     YANIX_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'yanix-launcher')
@@ -63,7 +63,7 @@ os.makedirs(CUSTOM_THEMES_DIR, exist_ok=True)
 
 DEFAULT_CONFIG = {
     "language": "en",
-    "theme": "dragon-red",
+    "theme": "flowers-pink",
     "game_path": "",
     "wine_prefix": "",
     "advanced_mode": False,
@@ -417,7 +417,7 @@ def load_config():
     if not os.path.exists(CONFIG_FILE):
         return DEFAULT_CONFIG.copy()
     try:
-        with open(CONFIG_FILE, 'r') as f:
+        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
             config = json.load(f)
         
         merged_config = DEFAULT_CONFIG.copy()
@@ -428,7 +428,7 @@ def load_config():
 
 def save_config(config):
     try:
-        with open(CONFIG_FILE, 'w') as f:
+        with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=4)
     except IOError as e:
         print(f"Error saving config: {e}")
@@ -446,7 +446,7 @@ def handle_first_run(config):
 
 def load_custom_theme(filepath, lang_data):
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
             theme_data = json.load(f)
         required_keys = ["background_color_start", "background_color_end",
                          "button_bg_color", "button_text_color",
@@ -629,7 +629,7 @@ class UpdateChecker(QObject):
             response.raise_for_status()
             latest_content = response.text
 
-            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.py') as tf:
+            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.py', encoding='utf-8', errors='replace') as tf:
                 tf.write(latest_content)
             temp_file = tf.name
 
@@ -651,10 +651,10 @@ class UpdateChecker(QObject):
                 else:
                     self.signals.update_status.emit(self.lang_data["update_uptodate"])
 
-        except Exception:
+        except Exception as e:
             if temp_file and os.path.exists(temp_file):
                 os.remove(temp_file)
-            self.signals.update_status.emit(self.lang_data["update_error"])
+            self.signals.update_status.emit(f"{self.lang_data['update_error']} ({e})")
 
 class SettingsDialog(QDialog):
     def __init__(self, config, lang_data, parent=None):
@@ -1329,9 +1329,9 @@ class YanixLauncher(QMainWindow):
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.Yes)
         if reply == QMessageBox.StandardButton.Yes:
             try:
-                with open(temp_file_path, 'r') as f_new:
+                with open(temp_file_path, 'r', encoding='utf-8') as f_new:
                     new_code = f_new.read()
-                with open(os.path.abspath(__file__), 'w') as f_old:
+                with open(os.path.abspath(__file__), 'w', encoding='utf-8') as f_old:
                     f_old.write(new_code)
                 os.remove(temp_file_path)
                 QMessageBox.information(self, self.lang["check_updates"], self.lang["update_restart_prompt"])
@@ -1379,7 +1379,7 @@ Yandere Simulator™ Made By YandereDev, All Rights Reserved
         self.support_button.setText(self.lang["support"])
         self.discord_button.setText(self.lang["discord"])
         self.credits_button.setText(self.lang["credits"])
-        self.version_label.setText(f"{self.lang['welcome']} v{self.current_launcher_version} — Flowers ")
+        self.version_label.setText(f"{self.lang['welcome']} v{self.current_launcher_version} ")
         self.apply_theme(self.config["theme"])
 
     def setup_ui(self):
