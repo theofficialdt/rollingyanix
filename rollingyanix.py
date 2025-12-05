@@ -37,7 +37,7 @@ except ImportError:
 IS_WINDOWS = platform.system() == 'Windows'
 
 CLIENT_ID = '1383809366460989490'
-USER_AGENT = 'RollingYanixLauncher/20251205.1'
+USER_AGENT = 'RollingYanixLauncher/20251205.2'
 
 if IS_WINDOWS:
     YANIX_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'yanix-launcher')
@@ -129,7 +129,7 @@ LANGUAGES = {
         "lang_ai_warning": "Este idioma es parcialmente traducido por IA. Algunas traducciones pueden ser incorrectas.", "info_title": "Información",
         "error_title": "Error", "lang_save_error": "No se pudo guardar la configuración de idioma: {e}", "theme_save_error": "No se pudo guardar la configuración del tema: {e}",
         "game_path_invalid": "La ruta del juego configurada no es válida. Por favor, selecciona el archivo .exe correcto.", "game_path_undefined": "La ruta del juego no está definida. Por favor, descarga el juego o selecciona el archivo .exe.",
-        "wine_missing": "WINE no está instalado o no está en tu PATH. Por favor, instala WINE para ejecutar el juego.", "game_launch_fail": "Error al iniciar el juego: {e}",
+        "wine_missing": "WINE no está instalado o no está no su PATH. Por favor, instala WINE para ejecutar el juego.", "game_launch_fail": "Error al iniciar el juego: {e}",
         "select_exe_window_title": "Seleccionar Ejecutable del Juego", "exe_file_filter": "Archivos ejecutables (.exe)", "success_title": "Éxito",
         "exe_save_success": "Ruta del ejecutable del juego guardada con éxito.", "exe_save_fail": "Error al guardar la ruta del ejecutable: {e}",
         "no_internet_title": "Sin Internet", "game_installed": "El juego ya está instalado.", "download_game_window_title": "Descargar Juego",
@@ -1331,8 +1331,12 @@ class YanixLauncher(QMainWindow):
             try:
                 with open(temp_file_path, 'r', encoding='utf-8') as f_new:
                     new_code = f_new.read()
-                with open(os.path.abspath(__file__), 'w', encoding='utf-8') as f_old:
+                
+                # Fix: Use sys.argv[0] instead of __file__ to update the correct executable script
+                current_script_path = os.path.abspath(sys.argv[0])
+                with open(current_script_path, 'w', encoding='utf-8') as f_old:
                     f_old.write(new_code)
+                
                 os.remove(temp_file_path)
                 QMessageBox.information(self, self.lang["check_updates"], self.lang["update_restart_prompt"])
                 os.execv(sys.executable, [sys.executable] + sys.argv)
